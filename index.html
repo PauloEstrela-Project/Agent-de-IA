@@ -1,44 +1,180 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agente de IA - Paulo Henrique Estrela</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agente de IA - Currículo Paulo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    #chat-box {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      max-width: 85%;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .user {
+      background-color: #e1f5fe;
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    .ai {
+      background-color: #e8f5e9;
+      align-self: flex-start;
+      text-align: left;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px 0 0 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      background-color: #4caf50;
+      color: white;
+      font-weight: 600;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 640px) {
+      #chat-box, .input-group {
+        width: 100%;
+      }
+
+      input, button {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Olá! Pergunte-me sobre o meu currículo.</h1>
+  <h1>Fale com a IA</h1>
+  <div id="chat-box" class="chat-container"></div>
 
-  <div id="chat-box" style="width: 100%; height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: white;"></div>
-
-  <input type="text" id="user-input" placeholder="Digite sua pergunta..." style="width: 80%; padding: 10px; margin-top: 10px;">
-  <button onclick="sendMessage()" style="padding: 10px; margin-left: 10px;">Enviar</button>
+  <div class="input-group">
+    <input type="text" id="user-input" placeholder="Digite sua pergunta..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
 
   <script>
     async function sendMessage() {
-      const userInput = document.getElementById("user-input").value;
-      document.getElementById("chat-box").innerHTML += "<p><strong>Você:</strong> " + userInput + "</p>";
-      document.getElementById("user-input").value = "";
+      const input = document.getElementById("user-input");
+      const question = input.value.trim();
+      if (!question) return;
 
-      const response = await getAIResponse(userInput);
-      document.getElementById("chat-box").innerHTML += "<p><strong>IA:</strong> " + response + "</p>";
-    }
+      const chatBox = document.getElementById("chat-box");
 
-    async function getAIResponse(userInput) {
-      const response = await fetch('https://api.openai.com/v1/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer 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'  // Substitua pela sua chave API do OpenAI
-        },
-        body: JSON.stringify({
-          model: 'text-davinci-003',
-          prompt: `Você é um assistente de IA especializado em fornecer informações sobre o currículo e experiência profissional de Paulo Henrique Estrela. Responda de forma clara e objetiva a qualquer pergunta sobre suas habilidades, experiência e projetos realizados.`,
-          max_tokens: 150
-        }),
-      });
-      const data = await response.json();
-      return data.choices[0].text.trim();
+      const userMessage = document.createElement("div");
+      userMessage.className = "message user";
+      userMessage.textContent = `Você: ${question}`;
+      chatBox.appendChild(userMessage);
+      input.value = "";
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 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"
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              {
+                role: "system",
+                content: "Você é um agente de IA treinado para responder perguntas sobre Paulo Henrique Estrela com cordialidade clareza e foco no contexto profissional e pessoal dele, Perfil Geral: Paulo Henrique Estrela é um profissional sênior em Supply Chain e Dados com mais de 10 anos de experiência no varejo com foco em eficiência automação e inteligência operacional com trajetória marcada por entregas de alto impacto automações inteligentes e visualizações estratégicas,Trabalha no GPA desde Novembro de 2023, entro como Analista de Abastecimento Pleno e foi promovido Atualmente é Analista de Abastecimento Senior,Trabalhou na Belmacut por 2 anos e 2 meses, Trabalhou na Cobasi no total por 9 anos e 8 meses, Cargos Recentes: GPA – Grupo Pão de Açúcar, Analista de Abastecimento Sênior desde novembro de 2024 lidera projetos de dashboards em Power BI automações com Power Automate e Python fluxos de dados com Alteryx suporte estratégico ao time comercial e resolução de rupturas, Analista de Abastecimento Pleno de 2023 a 2024 criou ferramentas de antecipação de demanda análise de abastecimento dashboards de grade automações com Knime e Python e soluções para frentes de loja, Cobasi – Analista de Supply Chain Júnior de fevereiro a outubro de 2023 responsável por análise de demanda parametrizações no sistema controle de pedidos a fornecedores curva ABC de vendas gestão de ruptura e apoio ao programa colaborativo de abastecimento, Experiências Anteriores: Assistente Administrativo de 2020 a 2023 atuou com controle de dados relatórios de indicadores ETL dashboards em Power BI e suporte à liderança com insights, Auxiliar Administrativo de 2019 a 2020 responsável por controle de notas fiscais planilhas fluxogramas e apresentações, Conferente de Mercadorias de 2017 a 2019 com foco em conferência recebimento e inventário, Armazenista de 2016 a 2017 executava inventários endereçamento e apoio operacional, Auxiliar de Armazém de 2014 a 2016 realizava coleta separação e organização de produtos, Belmacut Confecção – Encarregado de Estoque de 2012 a 2014 responsável por armazenagem inventário liderança de equipe controle de entrada e saída e distribuição de mercadorias, Formação: formado em Análise e Desenvolvimento de Sistemas pela Faculdade Impacta com base sólida em lógica de programação automações bancos de dados e integração de sistemas aplicados ao Supply Chain, Habilidades Técnicas: Power BI DAX Power Query Excel Avançado Alteryx Knime Python Power Automate SQL SharePoint Teradata RMS Korber WMS lógica de programação automação de processos ETL dashboards relatórios e análise de dados, Contato: paulo.h.jobs@gmail.com, Informações Pessoais: Paulo nasceu em 26 de outubro de 1992 é casado com a Cris desde 2014, é pai do Enzo nascido em 2018, e é espectro Autista nivel 1 de suporte,Certificações de Power Automate Impressionador na Hashtag treinamentos carga horaria de 28 horas,Fundamentos de Lógica de Programação no Instituto Bradesco carga horaria de 15 horas,Excel Avançado para Gráficos e Dashboards na Impacta com carga horaria de 24horas,Microsoft Power BI Completo na Udemy com carga horaria de 14 horas, Paulo gosta de passear com a família jogar videogame e estudar temas ligados a tecnologia inteligência artificial e dados, Regras do Agente: responda apenas perguntas relacionadas à trajetória profissional qualificações experiências e dados pessoais de Paulo Henrique Estrela se receber uma pergunta fora do escopo informe com gentileza que sua função é exclusivamente representar o perfil profissional e pessoal de Paulo Henrique Estrela"
+              },
+              {
+                role: "user",
+                content: question
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+
+        const aiMessage = document.createElement("div");
+        aiMessage.className = "message ai";
+        aiMessage.textContent = data?.choices?.[0]?.message?.content || "Desculpe, não consegui responder.";
+
+        chatBox.appendChild(aiMessage);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (error) {
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "message ai";
+        errorMessage.textContent = "Erro ao se conectar à IA.";
+        chatBox.appendChild(errorMessage);
+      }
     }
   </script>
 
