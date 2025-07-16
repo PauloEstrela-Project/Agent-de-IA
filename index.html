@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agente de IA - Paulo Henrique Estrela</title>
+</head>
+<body>
+
+  <h1>Olá! Pergunte-me sobre o meu currículo.</h1>
+
+  <div id="chat-box" style="width: 100%; height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; background-color: white;"></div>
+
+  <input type="text" id="user-input" placeholder="Digite sua pergunta..." style="width: 80%; padding: 10px; margin-top: 10px;">
+  <button onclick="sendMessage()" style="padding: 10px; margin-left: 10px;">Enviar</button>
+
+  <script>
+    async function sendMessage() {
+      const userInput = document.getElementById("user-input").value;
+      document.getElementById("chat-box").innerHTML += "<p><strong>Você:</strong> " + userInput + "</p>";
+      document.getElementById("user-input").value = "";
+
+      const response = await getAIResponse(userInput);
+      document.getElementById("chat-box").innerHTML += "<p><strong>IA:</strong> " + response + "</p>";
+    }
+
+    async function getAIResponse(userInput) {
+      const response = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer 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'  // Substitua pela sua chave API do OpenAI
+        },
+        body: JSON.stringify({
+          model: 'text-davinci-003',
+          prompt: `Você é um assistente de IA especializado em fornecer informações sobre o currículo e experiência profissional de Paulo Henrique Estrela. Responda de forma clara e objetiva a qualquer pergunta sobre suas habilidades, experiência e projetos realizados.`,
+          max_tokens: 150
+        }),
+      });
+      const data = await response.json();
+      return data.choices[0].text.trim();
+    }
+  </script>
+
+</body>
+</html>
